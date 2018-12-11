@@ -9,8 +9,7 @@ public class Rabbit extends GameObject {
     private static final int ROW_LEFT = 0;
     private static final int ROW_RIGHT = 1;
 
-    // Row index of Image are being used.
-    private int rowUsing = ROW_LEFT;
+    private int rowUsing = ROW_RIGHT;
 
     private int colUsing;
     private Bitmap standingL;
@@ -23,18 +22,22 @@ public class Rabbit extends GameObject {
     private Bitmap jumpShootR;
     private Bitmap[] movingL;
     private Bitmap[] movingR;
+    private Bitmap currMoveBitmap;
 
     // Velocity of game character (pixel/millisecond)
-    public static float yVelocity = 0f;
-    public static float xVelocity = 0f;
-    public static float rightVelocity = 0f;
-    public static float leftVelocity = 0f;
-    public static final float MAX_Y_VELOCITY = 1.5f;
-    public static final float MAX_X_VELOCITY = 1.5f;
-    public static final float MAX_X_VECTOR = 3;
-    public static final float MAX_Y_VECTOR = 3;
+    private static float upVelocity = 0f;
+    private static float downVelocity = 0f;
+    private static float rightVelocity = 0f;
+    private static float leftVelocity = 0f;
+    private static final float MAX_Y_VELOCITY = 1.5f;
+    private static final float MAX_X_VELOCITY = 1.5f;
+    private static final float MAX_X_VECTOR = 3;
+    private static final float MAX_Y_VECTOR = 3;
 
-    Direction direction;
+    private Direction direction;
+    private Direction facingDirection = Direction.RIGHT;
+
+    private boolean isShooting = false;
 
     private float movingVectorX = 0;
     private float movingVectorY = 0;
@@ -54,7 +57,6 @@ public class Rabbit extends GameObject {
             this.movingL[col] = this.createSubImageAt(ROW_LEFT, col+1);
             this.movingR[col]  = this.createSubImageAt(ROW_RIGHT, col+1);
         }
-
         this.standingL = this.createSubImageAt(0,0);
         this.standingR = this.createSubImageAt(1,0);
         this.shootingL = this.createSubImageAt(2,0);
@@ -64,74 +66,87 @@ public class Rabbit extends GameObject {
         this.jumpR = this.createSubImageAt(3,1);
         this.jumpShootR = this.createSubImageAt(3,2);
 
+        currMoveBitmap = standingR;
 
     }
 
-    public Bitmap[] getMoveBitmaps()  {
-        switch (rowUsing)  {
-            case ROW_LEFT:
-                return  this.movingL;
-            case ROW_RIGHT:
-                return this.movingR;
-            default:
-                return null;
-
-        }
-    }
 
     public Bitmap getCurrentMoveBitmap()  {
-        Bitmap[] bitmaps = this.getMoveBitmaps();
-        return bitmaps[this.colUsing];
+        return currMoveBitmap;
+    }
+
+    private void setCurrentMoveBitmap(){
+        if(isAirborne()){
+            if(isShooting)
+                if(facingDirection == Direction.RIGHT)
+                    currMoveBitmap = jumpShootR;
+                else
+                    currMoveBitmap = jumpShootL;
+            else
+                if(facingDirection == Direction.RIGHT)
+                    currMoveBitmap = jumpR;
+                else
+                    currMoveBitmap = jumpL;
+        }
+        else{
+            if(isShooting)
+            {
+                if(facingDirection == Direction.LEFT)
+                    currMoveBitmap = shootingL;
+                else
+                    currMoveBitmap = shootingR;
+            }
+            else
+            {
+                switch(direction) {
+                    case RIGHT: {
+                        if(currMoveBitmap != movingR[0])
+                            currMoveBitmap = movingR[0];
+                        else
+                            currMoveBitmap = movingR[1];
+                        break;
+                    }
+
+                    case LEFT: {
+                        if(currMoveBitmap != movingL[0])
+                            currMoveBitmap = movingL[0];
+                        else
+                            currMoveBitmap = movingL[1];
+                        break;
+                    }
+
+                    case NONE: {
+                        if (facingDirection == Direction.LEFT)
+                            currMoveBitmap = standingL;
+                        else
+                            currMoveBitmap = standingR;
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 
 
     public void update()  {
 
-        // Rabbit above ground
-        if(y < this.gameSurface.getHeight()- objHeight)
+        setCurrentMoveBitmap();
+
+        if(isAirborne())
         {
-            if(movingVectorY <= MAX_Y_VECTOR)
-                movingVectorY += 0.1;
-            movingVectorY = 1;
-            if(yVelocity <= MAX_Y_VELOCITY)
-                yVelocity += 0.05f;
+            fall();
         }
         else
         {
+                y=this.gameSurface.getHeight()- objHeight;
                 movingVectorY = 0;
-                yVelocity = 0;
+                downVelocity = 0;
         }
 
-        switch(direction)
-        {
-            case RIGHT:
-            {
-                if(leftVelocity > 0)
-                    deaccel();
-                else
-                    accelRight();
-                break;
-            }
+        changeDirection();
 
-            case LEFT:
-            {
-                if(rightVelocity > 0)
-                    deaccel();
-                else
-                    accelLeft();
-                break;
-            }
-            case NONE:
-            {
-                deaccel();
-                break;
-            }
-        }
 
-        this.colUsing++;
-        if(colUsing >= 2)  {
-            this.colUsing =0;
-        }
         // Current time in nanoseconds
         long now = System.nanoTime();
 
@@ -145,7 +160,7 @@ public class Rabbit extends GameObject {
         // Distance moves
 
         float xDistance = Math.max(rightVelocity,leftVelocity) * deltaTime;
-        float yDistance = yVelocity * deltaTime;
+        float yDistance = Math.max(downVelocity,upVelocity) * deltaTime;
 
         double movingVectorLength = Math.sqrt(movingVectorX* movingVectorX + movingVectorY*movingVectorY);
 
@@ -236,4 +251,74 @@ public class Rabbit extends GameObject {
         if(leftVelocity <= MAX_X_VELOCITY)
             leftVelocity += 0.05f;
     }
+
+    private void  jump()
+    {
+        if(downVelocity <= 0 && upVelocity <= 0)
+        {
+            upVelocity = 1.5f;
+            movingVectorY = -3;
+        }
+    }
+
+    private void changeDirection()
+    {
+        switch(direction)
+        {
+            case RIGHT:
+            {
+                facingDirection = Direction.RIGHT;
+                if(leftVelocity > 0)
+                    deaccel();
+                else
+                    accelRight();
+                break;
+            }
+
+            case LEFT:
+            {
+                facingDirection = Direction.LEFT;
+                if(rightVelocity > 0)
+                    deaccel();
+                else
+                    accelLeft();
+                break;
+            }
+
+            case NONE:
+            {
+                deaccel();
+                break;
+            }
+
+            case UP:
+            {
+                jump();
+                break;
+            }
+        }
+    }
+
+    private boolean isAirborne()
+    {
+        if(y < this.gameSurface.getHeight()- objHeight)
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    private void fall()
+    {
+        if(upVelocity > 0)
+            upVelocity -= 0.05f;
+        if(movingVectorY <= MAX_Y_VECTOR)
+            movingVectorY += 0.1;
+        if(movingVectorY > 0)
+            if(downVelocity <= MAX_Y_VELOCITY)
+                downVelocity += 0.05f;
+    }
+
+
 }

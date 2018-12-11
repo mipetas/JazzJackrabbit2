@@ -8,7 +8,7 @@ import android.graphics.Paint;
 public class Joystick {
 
     private GameSurface gameSurface;
-
+    
     private int radius;
 
     private int centerX;
@@ -18,8 +18,7 @@ public class Joystick {
 
     private double angle = 0;
     private double power = 0;
-
-    private int adjacent, oposite;
+    private final int requiredPower = 30;
 
     Direction direction;
 
@@ -62,7 +61,7 @@ public class Joystick {
 
     }
 
-    public void resetBall()
+    private void resetBall()
     {
         ballY = centerY;
         ballX = centerX;
@@ -78,6 +77,7 @@ public class Joystick {
 
     public void update(){
 
+        int adjacent, opposite;
 
         if(ballY == centerY && ballX == centerX){
             angle = 0;
@@ -86,38 +86,38 @@ public class Joystick {
 
         else if(ballX > centerX && ballY < centerY){
             adjacent = ballX - centerX;
-            oposite = centerY - ballY;
-            angle = Math.toDegrees(Math.atan2(oposite, adjacent));
-            power = Math.sqrt(oposite*oposite+adjacent*adjacent)/radius*100;
+            opposite = centerY - ballY;
+            angle = Math.toDegrees(Math.atan2(opposite, adjacent));
+            power = Math.sqrt(opposite*opposite+adjacent*adjacent)/radius*100;
         }
 
         else if(ballX < centerX && ballY < centerY){
-            oposite = centerX - ballX;
+            opposite = centerX - ballX;
             adjacent = centerY - ballY;
-            angle = Math.toDegrees(Math.atan2(oposite, adjacent)) + 90;
-            power = Math.sqrt(oposite*oposite+adjacent*adjacent)/radius*100;
+            angle = Math.toDegrees(Math.atan2(opposite, adjacent)) + 90;
+            power = Math.sqrt(opposite*opposite+adjacent*adjacent)/radius*100;
         }
 
         else if(ballX < centerX && ballY > centerY){
             adjacent = centerX - ballX;
-            oposite = ballY - centerY;
-            angle = Math.toDegrees(Math.atan2(oposite, adjacent)) + 180;
-            power = Math.sqrt(oposite*oposite+adjacent*adjacent)/radius*100;
+            opposite = ballY - centerY;
+            angle = Math.toDegrees(Math.atan2(opposite, adjacent)) + 180;
+            power = Math.sqrt(opposite*opposite+adjacent*adjacent)/radius*100;
         }
 
         else if(ballX > centerX && ballY > centerY){
-            oposite = ballX - centerX;
+            opposite = ballX - centerX;
             adjacent = ballY - centerY;
-            angle = Math.toDegrees(Math.atan2(oposite, adjacent)) + 270;
-            power = Math.sqrt(oposite*oposite+adjacent*adjacent)/radius*100;
+            angle = Math.toDegrees(Math.atan2(opposite, adjacent)) + 270;
+            power = Math.sqrt(opposite*opposite+adjacent*adjacent)/radius*100;
         }
 
         setDirection(angle, power);
 
     }
 
-    public void setDirection(double angle, double power){
-        if(power > 40){
+    private void setDirection(double angle, double power){
+        if(power > requiredPower){
             if((angle >= 0 && angle <= 50) ||
                     (angle >= 310 && angle <= 360)){
                 direction = Direction.RIGHT;
