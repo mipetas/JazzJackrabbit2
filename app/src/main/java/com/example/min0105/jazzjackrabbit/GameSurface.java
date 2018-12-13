@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -11,12 +12,19 @@ import android.view.SurfaceView;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
+    private final int PLAYER_WIDTH = 120;
+    private final int PLAYER_HEIGHT = 140;
+
+    private int playerStartX;
+    private int playerStartY;
 
     private GameThread gameThread;
 
     private Rabbit player;
 
     private Joystick joystick;
+
+    private Level currLevel = new Level();
 
     private float xDown, yDown;
 
@@ -41,7 +49,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas)  {
         super.draw(canvas);
-
+        this.currLevel.drawBlocks(canvas, this.player.getX() - playerStartX,
+                this.player.getY() - playerStartY);
         this.player.draw(canvas);
         this.joystick.draw(canvas);
     }
@@ -50,9 +59,20 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Bitmap playerBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.kralejk_bitmap);
-        this.player = new Rabbit(this,playerBitmap,20,10);
-
+        this.player = new Rabbit(this,playerBitmap,
+                getWidth()/2-PLAYER_WIDTH/2,getHeight()*2/3,
+                PLAYER_WIDTH, PLAYER_HEIGHT);
+        playerStartX = getWidth()/2 - PLAYER_WIDTH/2;
+        playerStartY = getHeight()*2/3;
         this.joystick = new Joystick(this);
+
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass_l),0, 960, 120));
+        for(int i=1; i<14; i++)
+        {
+            this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),i*120, 960, 120));
+        }
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass_r),14*120, 960, 120));
+
         this.gameThread = new GameThread(this,holder);
         this.gameThread.setRunning(true);
         this.gameThread.start();
@@ -108,6 +128,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
         }
         return true;
+    }
+
+    public Level getCurrLevel(){
+        return currLevel;
     }
 
 }

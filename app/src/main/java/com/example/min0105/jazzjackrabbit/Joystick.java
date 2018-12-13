@@ -8,7 +8,7 @@ import android.graphics.Paint;
 public class Joystick {
 
     private GameSurface gameSurface;
-    
+
     private int radius;
 
     private int centerX;
@@ -20,10 +20,10 @@ public class Joystick {
     private double power = 0;
     private final int requiredPower = 30;
 
-    Direction direction;
+    private Direction direction;
 
-    Paint backgroundPaint;
-    Paint ballPaint;
+    private Paint backgroundPaint;
+    private Paint ballPaint;
 
     public Joystick(GameSurface gameSurface)
     {
@@ -61,7 +61,7 @@ public class Joystick {
 
     }
 
-    private void resetBall()
+    public void resetBall()
     {
         ballY = centerY;
         ballX = centerX;

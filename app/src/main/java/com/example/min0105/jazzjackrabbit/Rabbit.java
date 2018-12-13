@@ -46,8 +46,8 @@ public class Rabbit extends GameObject {
 
     private GameSurface gameSurface;
 
-    public Rabbit(GameSurface gameSurface, Bitmap image, int x, int y) {
-        super(image, 4, 3, x, y, 120, 140);
+    public Rabbit(GameSurface gameSurface, Bitmap image, int x, int y,int width,int height) {
+        super(image, 4, 3, x, y, width, height);
 
         this.gameSurface= gameSurface;
 
@@ -131,22 +131,6 @@ public class Rabbit extends GameObject {
 
     public void update()  {
 
-        setCurrentMoveBitmap();
-
-        if(isAirborne())
-        {
-            fall();
-        }
-        else
-        {
-                y=this.gameSurface.getHeight()- objHeight;
-                movingVectorY = 0;
-                downVelocity = 0;
-        }
-
-        changeDirection();
-
-
         // Current time in nanoseconds
         long now = System.nanoTime();
 
@@ -168,47 +152,33 @@ public class Rabbit extends GameObject {
         this.x = x +  (int)(xDistance* movingVectorX / movingVectorLength);
         this.y = y +  (int)(yDistance* movingVectorY / movingVectorLength);
 
-        // When the game's character touches the edge of the screen, then change direction
-/*
-        if(this.x < 0 )  {
-            this.x = 0;
-            this.movingVectorX = - this.movingVectorX;
-        } else if(this.x > this.gameSurface.getWidth() -objWidth)  {
-            this.x= this.gameSurface.getWidth()-objWidth;
-            this.movingVectorX = - this.movingVectorX;
+        int xD = gameSurface.getCurrLevel().isInBlocks(x + getWidth()/2, y + getHeight());
+
+
+        setCurrentMoveBitmap();
+
+        if(isAirborne())
+        {
+            fall();
+        }
+        else
+        {
+            y=this.gameSurface.getHeight()- objHeight;
+            movingVectorY = 0;
+            downVelocity = 0;
         }
 
-        if(this.y < 0 )  {
-            this.y = 0;
-            this.movingVectorY = - this.movingVectorY;
-        } else if(this.y > this.gameSurface.getHeight()- objHeight)  {
-            this.y= this.gameSurface.getHeight()- objHeight;
-            this.movingVectorY = - this.movingVectorY ;
-        }
+        changeDirection();
 
-        // rowUsing
-        if( movingVectorX > 0 )  {
-            if(movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
-                this.rowUsing = ROW_LEFT;
-            }else if(movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
-                this.rowUsing = ROW_LEFT;
-            }else  {
-                this.rowUsing = ROW_RIGHT;
-            }
-        } else {
-            if(movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
-                this.rowUsing = ROW_LEFT;
-            }else if(movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
-                this.rowUsing = ROW_LEFT;
-            }else  {
-                this.rowUsing = ROW_LEFT;
-            }
-        }*/
+        if(xD !=0)
+            y = xD - getHeight();
+
     }
 
     public void draw(Canvas canvas)  {
         Bitmap bitmap = this.getCurrentMoveBitmap();
-        canvas.drawBitmap(bitmap,x, y, null);
+        canvas.drawBitmap(bitmap,gameSurface.getWidth()/2-getWidth()/2,
+                gameSurface.getHeight()*2/3, null);
         // Last draw time.
         this.lastDrawNanoTime= System.nanoTime();
     }
@@ -301,12 +271,15 @@ public class Rabbit extends GameObject {
 
     private boolean isAirborne()
     {
-        if(y < this.gameSurface.getHeight()- objHeight)
+        if(gameSurface.getCurrLevel().isInBlocks(x + getWidth()/2, y + getHeight())== 0)
+            return true;
+
+       /* if(y < this.gameSurface.getHeight()- objHeight)
         {
             return true;
-        }
-        else
-            return false;
+        }*/
+
+        return false;
     }
 
     private void fall()

@@ -9,11 +9,11 @@ public abstract class GameObject {
     protected final int rowCount;
     protected final int colCount;
 
-    protected final int mapWidth;
-    protected final int mapHeight;
+    private final int mapWidth;
+    private final int mapHeight;
 
-    protected final int imgWidth;
-    protected final int imgHeight;
+    private final int imgWidth;
+    private final int imgHeight;
 
     protected final int objWidth;
     protected final int objHeight;
