@@ -2,6 +2,7 @@ package com.example.min0105.jazzjackrabbit;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 
 
 public class Rabbit extends GameObject {
@@ -38,6 +39,13 @@ public class Rabbit extends GameObject {
     private Direction facingDirection = Direction.RIGHT;
 
     private boolean isShooting = false;
+    private boolean isAirborne = true;
+
+    private Point leftFoot;
+    private Point rightFoot;
+    private Point leftHead;
+    private Point rightHead;
+    private Point collidingBlock = new Point();
 
     private float movingVectorX = 0;
     private float movingVectorY = 0;
@@ -66,6 +74,11 @@ public class Rabbit extends GameObject {
         this.jumpR = this.createSubImageAt(3,1);
         this.jumpShootR = this.createSubImageAt(3,2);
 
+        rightFoot = new Point(x + getWidth(), y + getHeight());
+        leftFoot = new Point(x, y + getHeight());
+        leftHead = new Point(x, y);
+        rightHead = new Point(x + getWidth(), y);
+
         currMoveBitmap = standingR;
 
     }
@@ -76,7 +89,7 @@ public class Rabbit extends GameObject {
     }
 
     private void setCurrentMoveBitmap(){
-        if(isAirborne()){
+        if(isAirborne){
             if(isShooting)
                 if(facingDirection == Direction.RIGHT)
                     currMoveBitmap = jumpShootR;
@@ -149,13 +162,12 @@ public class Rabbit extends GameObject {
         double movingVectorLength = Math.sqrt(movingVectorX* movingVectorX + movingVectorY*movingVectorY);
 
         // Calculate the new position of the game character.
-        this.x = x +  (int)(xDistance* movingVectorX / movingVectorLength);
-        this.y = y +  (int)(yDistance* movingVectorY / movingVectorLength);
-
-        int xD = gameSurface.getCurrLevel().isInBlocks(x + getWidth()/2, y + getHeight());
-
+        int newX = x +  (int)(xDistance* movingVectorX / movingVectorLength);
+        int newY = y +  (int)(yDistance* movingVectorY / movingVectorLength);
 
         setCurrentMoveBitmap();
+
+        checkBlockCollision(newX, newY);
 
         if(isAirborne())
         {
@@ -163,15 +175,12 @@ public class Rabbit extends GameObject {
         }
         else
         {
-            y=this.gameSurface.getHeight()- objHeight;
             movingVectorY = 0;
             downVelocity = 0;
         }
 
         changeDirection();
 
-        if(xD !=0)
-            y = xD - getHeight();
 
     }
 
@@ -228,6 +237,7 @@ public class Rabbit extends GameObject {
         {
             upVelocity = 1.5f;
             movingVectorY = -3;
+            isAirborne = true;
         }
     }
 
@@ -271,15 +281,19 @@ public class Rabbit extends GameObject {
 
     private boolean isAirborne()
     {
-        if(gameSurface.getCurrLevel().isInBlocks(x + getWidth()/2, y + getHeight())== 0)
-            return true;
-
-       /* if(y < this.gameSurface.getHeight()- objHeight)
+        if(gameSurface.getCurrLevel().isInBlocks( x, y + getHeight() + 1) ||
+                gameSurface.getCurrLevel().isInBlocks(x + getWidth(), y + getHeight() + 1))
         {
-            return true;
-        }*/
+            isAirborne = false;
+            return false;
+        }
 
-        return false;
+        else
+        {
+            isAirborne = true;
+            return true;
+        }
+
     }
 
     private void fall()
@@ -291,6 +305,94 @@ public class Rabbit extends GameObject {
         if(movingVectorY > 0)
             if(downVelocity <= MAX_Y_VELOCITY)
                 downVelocity += 0.05f;
+    }
+
+
+    private void checkBlockCollision(int tempX, int tempY ){
+        if(rightVelocity > 0){
+            checkRightCollision(tempX);
+        }
+
+        if(leftVelocity > 0){
+            checkLeftCollision(tempX);
+        }
+
+        if(upVelocity > 0){
+            checkUpCollision(tempY);
+        }
+
+        if(downVelocity > 0){
+            checkDownCollision(tempY);
+        }
+    }
+
+    public void setCollidingBlock(int x,int  y){
+        collidingBlock.x = x;
+        collidingBlock.y = y;
+    }
+
+    private void checkRightCollision(int tempX){
+        if(gameSurface.getCurrLevel().isInBlocks(tempX + getWidth(), y) ||
+                gameSurface.getCurrLevel().isInBlocks(tempX + getWidth(), y + getHeight()))
+        {
+            x = collidingBlock.x - getWidth() - 1;
+            xCrash();
+        }
+        else{
+            x = tempX;
+        }
+    }
+
+    private void checkLeftCollision(int tempX){
+        if(gameSurface.getCurrLevel().isInBlocks(tempX, y) ||
+                gameSurface.getCurrLevel().isInBlocks(tempX, y + getHeight()))
+        {
+            x = collidingBlock.x + gameSurface.BLOCK_SIZE + 1;
+            xCrash();
+        }
+        else{
+            x = tempX;
+        }
+    }
+
+    private void checkUpCollision(int tempY){
+        if(gameSurface.getCurrLevel().isInBlocks( x, tempY) ||
+                gameSurface.getCurrLevel().isInBlocks(x + getWidth(), tempY))
+        {
+            y = collidingBlock.y + gameSurface.BLOCK_SIZE + 1;
+            yCrash();
+            isAirborne = true;
+        }
+        else{
+            y = tempY;
+            isAirborne = true;
+        }
+    }
+
+    private void checkDownCollision(int tempY){
+        if(gameSurface.getCurrLevel().isInBlocks( x, tempY + getHeight()) ||
+                gameSurface.getCurrLevel().isInBlocks(x + getWidth(), tempY + getHeight()))
+        {
+            y = collidingBlock.y - getHeight() - 1;
+            yCrash();
+            isAirborne = false;
+        }
+        else{
+            y = tempY;
+            isAirborne = true;
+        }
+    }
+
+    private void xCrash(){
+        leftVelocity = 0;
+        rightVelocity = 0;
+        movingVectorX = 0;
+    }
+
+    private void yCrash(){
+        upVelocity = 0;
+        downVelocity = 0;
+        movingVectorY = 0;
     }
 
 

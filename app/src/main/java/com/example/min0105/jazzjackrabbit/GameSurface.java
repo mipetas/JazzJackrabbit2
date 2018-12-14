@@ -12,8 +12,10 @@ import android.view.SurfaceView;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
-    private final int PLAYER_WIDTH = 120;
-    private final int PLAYER_HEIGHT = 140;
+    public final int BLOCK_SIZE = 120;
+
+    public final int PLAYER_WIDTH = 120;
+    public final int PLAYER_HEIGHT = 140;
 
     private int playerStartX;
     private int playerStartY;
@@ -24,7 +26,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     private Joystick joystick;
 
-    private Level currLevel = new Level();
+    private Level currLevel;
 
     private float xDown, yDown;
 
@@ -65,13 +67,21 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         playerStartX = getWidth()/2 - PLAYER_WIDTH/2;
         playerStartY = getHeight()*2/3;
         this.joystick = new Joystick(this);
+        this.currLevel = new Level(this);
 
-        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass_l),0, 960, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),7*120, 500, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),9*120, 650, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),14*120, 480, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),14*120, 600, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),14*120, 720, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),14*120, 840, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),0, 840, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.ground),0, 960, 120));
         for(int i=1; i<14; i++)
         {
             this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass),i*120, 960, 120));
         }
-        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.grass_r),14*120, 960, 120));
+        this.currLevel.addBlock(new Block(BitmapFactory.decodeResource(this.getResources(),R.drawable.ground),14*120, 960, 120));
 
         this.gameThread = new GameThread(this,holder);
         this.gameThread.setRunning(true);
@@ -132,6 +142,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     public Level getCurrLevel(){
         return currLevel;
+    }
+
+    public Rabbit getPlayer(){
+        return player;
     }
 
 }

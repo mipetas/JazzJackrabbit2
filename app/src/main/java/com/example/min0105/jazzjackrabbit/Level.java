@@ -9,13 +9,16 @@ public class Level {
 
     private Drawable background;
 
+    private GameSurface gameSurface;
+
     private ArrayList<GameBlock> blocks = new ArrayList<>();
 
     private boolean backgroundDrawn = false;
 
-    public Level(){
+    public Level(GameSurface gameSurface){
        // this.background =  background;
        // background.setBounds(0, 0, 1920, 1080);
+        this.gameSurface = gameSurface;
 
     }
 
@@ -38,12 +41,16 @@ public class Level {
     }
 
 
-    public int isInBlocks(int x, int y){
+    public boolean isInBlocks(int x, int y){
         for(int i = 0; i < blocks.size(); i++){
             if(blocks.get(i).isInBlock(x, y))
-                return blocks.get(i).getY();
+            {
+                gameSurface.getPlayer().setCollidingBlock(blocks.get(i).getX(), blocks.get(i).getY());
+                return true;
+            }
+
         }
-        return 0;
+        return false;
     }
 
 }
