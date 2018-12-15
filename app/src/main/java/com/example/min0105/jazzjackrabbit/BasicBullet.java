@@ -2,7 +2,6 @@ package com.example.min0105.jazzjackrabbit;
 
 import android.graphics.Bitmap;
 
-import static com.example.min0105.jazzjackrabbit.Direction.*;
 
 public class BasicBullet extends Bullet {
 
@@ -20,7 +19,7 @@ public class BasicBullet extends Bullet {
     }
 
     @Override
-    public void update() {
+    public void  update() {
 
         if(traveledDistance < MAX_TRAVEL_DISTANCE)
         {
