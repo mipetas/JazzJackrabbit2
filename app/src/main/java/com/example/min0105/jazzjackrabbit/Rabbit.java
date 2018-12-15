@@ -1,6 +1,7 @@
 package com.example.min0105.jazzjackrabbit;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 
@@ -51,6 +52,7 @@ public class Rabbit extends GameObject {
     private float movingVectorY = 0;
 
     private long lastDrawNanoTime =-1;
+    private int lastShotCounter = 1000;
 
     private GameSurface gameSurface;
 
@@ -181,7 +183,16 @@ public class Rabbit extends GameObject {
 
         changeDirection();
 
-
+        if(lastShotCounter > 20)
+        {
+            if(isShooting)
+            {
+                shoot();
+                lastShotCounter = 0;
+            }
+        }
+        else
+            lastShotCounter++;
     }
 
     public void draw(Canvas canvas)  {
@@ -190,11 +201,6 @@ public class Rabbit extends GameObject {
                 gameSurface.getHeight()*2/3, null);
         // Last draw time.
         this.lastDrawNanoTime= System.nanoTime();
-    }
-
-    public void setMovingVector(int movingVectorX, int movingVectorY)  {
-        this.movingVectorX= movingVectorX;
-        this.movingVectorY = movingVectorY;
     }
 
     public void setDirection(Direction d){
@@ -395,5 +401,26 @@ public class Rabbit extends GameObject {
         movingVectorY = 0;
     }
 
+    public void startShooting(){
+        isShooting = true;
+    }
+
+    public void stopShooting(){
+        isShooting = false;
+    }
+
+    public void shoot(){
+
+
+        if (facingDirection == Direction.LEFT)
+            gameSurface.getCurrLevel().addBullet(new BasicBullet(BitmapFactory.decodeResource(gameSurface.getResources(),
+                    gameSurface.getResources().getIdentifier("basic_bullet", "drawable",
+                            gameSurface.context.getPackageName())), x, y + getHeight() * 2 / 3, getWidth() / 6, getWidth() / 12, Direction.LEFT));
+        if (facingDirection == Direction.RIGHT)
+            gameSurface.getCurrLevel().addBullet(new BasicBullet(BitmapFactory.decodeResource(gameSurface.getResources(),
+                       gameSurface.getResources().getIdentifier("basic_bullet", "drawable",
+                               gameSurface.context.getPackageName())), x + getWidth(), y + getHeight() * 2 / 3, getWidth() / 6, getWidth() / 12, Direction.RIGHT));
+
+    }
 
 }

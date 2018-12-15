@@ -47,11 +47,8 @@ public class Joystick {
 
     public void moveBall(float xDown, float yDown)
     {
-        if(isPointInCircle(xDown, yDown))
-        {
             ballY = (int) yDown;
             ballX = (int) xDown;
-        }
     }
 
     public void draw(Canvas canvas){
@@ -67,7 +64,7 @@ public class Joystick {
         ballX = centerX;
     }
 
-    public boolean isPointInCircle(float x, float y){
+    public boolean isInCircle(float x, float y){
         if(Math.sqrt(((x-centerX)*(x-centerX)+(y-centerY)*(y-centerY))) <= radius)
             return true;
         else
