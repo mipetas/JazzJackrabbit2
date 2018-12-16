@@ -61,9 +61,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas)  {
         super.draw(canvas);
-        this.currLevel.drawBlocks(canvas,player.getX() - getWidth()/2+PLAYER_WIDTH/2,
-                player.getY() - getHeight()*2/3);
-        this.currLevel.drawBullets(canvas,player.getX() - getWidth()/2+PLAYER_WIDTH/2,
+        this.currLevel.draw(canvas,player.getX() - getWidth()/2+PLAYER_WIDTH/2,
                 player.getY() - getHeight()*2/3);
         this.player.draw(canvas);
         this.joystick.draw(canvas);
@@ -218,7 +216,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             writer.newLine();
             writer.write("ground 0 0 grass 0 0 0 0 0 0 0 0 0 0 0 0 ground ");
             writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ground ");
+            writer.write("ground 0 0 0 0 0 0 0 0 0 0 Eturtle 0 0 0 0 ground ");
             writer.newLine();
             writer.write("ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ");
             writer.newLine();
@@ -268,6 +266,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                             currLevel.addBlock(new Block(BitmapFactory.decodeResource(getResources(),
                                     getResources().getIdentifier(item , "drawable", context.getPackageName())),
                                     x, y, BLOCK_SIZE
+                            ));
+                        }
+                        else
+                        {
+                            currLevel.addEnemy(new Turtle(this,BitmapFactory.decodeResource(getResources(),
+                                    getResources().getIdentifier(item.substring(1) , "drawable", context.getPackageName())),
+                                    1, 1, x, y, PLAYER_WIDTH*3, PLAYER_HEIGHT
                             ));
                         }
                     }

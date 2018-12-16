@@ -6,6 +6,8 @@ public class DestroyableBlock extends GameBlock implements IDestroyable {
 
     private int health;
 
+    private boolean isDestroyed = false;
+
     public DestroyableBlock(Bitmap image, int x, int y, int size, int health) {
         super(image, x, y, size);
 
@@ -19,12 +21,8 @@ public class DestroyableBlock extends GameBlock implements IDestroyable {
         health -= damage;
 
         if(health <= 0)
-            destroy();
-
+            isDestroyed = true;
     }
 
-    @Override
-    public void destroy() {
 
-    }
 }

@@ -24,4 +24,8 @@ public abstract class Bullet extends GameObject {
         canvas.drawBitmap(currImg, x-xDiff, y-yDiff,null);
     }
 
+    public int getDamage(){
+        return damage;
+    }
+
 }

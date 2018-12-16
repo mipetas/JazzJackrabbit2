@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 
 
-public class Rabbit extends GameObject {
+public class Rabbit extends GameCharacter {
 
     private static final int ROW_LEFT = 0;
     private static final int ROW_RIGHT = 1;
@@ -35,12 +35,15 @@ public class Rabbit extends GameObject {
     private static final float MAX_X_VELOCITY = 1.5f;
     private static final float MAX_X_VECTOR = 3;
     private static final float MAX_Y_VECTOR = 3;
+    private static final int INVINCIBILITY_FRAMES = 150;
+    private static final int SHOOT_FRAME_DELAY = 20;
 
     private Direction direction;
     private Direction facingDirection = Direction.RIGHT;
 
     private boolean isShooting = false;
     private boolean isAirborne = true;
+    private boolean isInvincible = false;
 
     private Point leftFoot;
     private Point rightFoot;
@@ -53,6 +56,7 @@ public class Rabbit extends GameObject {
 
     private long lastDrawNanoTime =-1;
     private int lastShotCounter = 1000;
+    private int invincibilityCounter = 0;
 
     private GameSurface gameSurface;
 
@@ -181,9 +185,28 @@ public class Rabbit extends GameObject {
             downVelocity = 0;
         }
 
-        changeDirection();
+        move();
+        checkShooting();
+        checkInvincibility();
 
-        if(lastShotCounter > 20)
+    }
+
+    private void checkInvincibility() {
+        if(isInvincible)
+        {
+            if(invincibilityCounter > INVINCIBILITY_FRAMES)
+            {
+                isInvincible = false;
+                invincibilityCounter = 0;
+            }
+            else
+                invincibilityCounter++;
+        }
+
+    }
+
+    private void checkShooting() {
+        if(lastShotCounter > SHOOT_FRAME_DELAY)
         {
             if(isShooting)
             {
@@ -247,7 +270,7 @@ public class Rabbit extends GameObject {
         }
     }
 
-    private void changeDirection()
+    private void move()
     {
         switch(direction)
         {
@@ -423,4 +446,16 @@ public class Rabbit extends GameObject {
 
     }
 
+    @Override
+    public void hit(int damage) {
+        health -= damage;
+        isInvincible = true;
+
+        if(health <= 0)
+        {
+            // TODO GAME OVER
+        }
+
+
+    }
 }
