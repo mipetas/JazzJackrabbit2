@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.media.MediaPlayer;
+import android.widget.Toast;
 
 
 public class Rabbit extends GameCharacter {
@@ -25,6 +27,9 @@ public class Rabbit extends GameCharacter {
     private Bitmap[] movingL;
     private Bitmap[] movingR;
     private Bitmap currMoveBitmap;
+
+    private MediaPlayer au, augay, pew;
+
 
     // Velocity of game character (pixel/millisecond)
     private static float upVelocity = 0f;
@@ -86,6 +91,10 @@ public class Rabbit extends GameCharacter {
         rightHead = new Point(x + getWidth(), y);
 
         currMoveBitmap = standingR;
+
+        pew = MediaPlayer.create(gameSurface.context, R.raw.pew);
+        au = MediaPlayer.create(gameSurface.context, R.raw.au);
+        augay = MediaPlayer.create(gameSurface.context, R.raw.augay);
 
     }
 
@@ -187,7 +196,12 @@ public class Rabbit extends GameCharacter {
 
         move();
         checkShooting();
+        checkEnemyCollision();
         checkInvincibility();
+
+        if(gameSurface.getCurrLevel().isInFinish(x,y))
+            Toast.makeText(gameSurface.context, "YOU WON",
+                    Toast.LENGTH_LONG).show();
 
     }
 
@@ -200,7 +214,12 @@ public class Rabbit extends GameCharacter {
                 invincibilityCounter = 0;
             }
             else
+            {
+                if(invincibilityCounter % 5 == 0 )
+                    currMoveBitmap = null;
                 invincibilityCounter++;
+            }
+
         }
 
     }
@@ -310,8 +329,8 @@ public class Rabbit extends GameCharacter {
 
     private boolean isAirborne()
     {
-        if(gameSurface.getCurrLevel().isInBlocks( x, y + getHeight() + 1) ||
-                gameSurface.getCurrLevel().isInBlocks(x + getWidth(), y + getHeight() + 1))
+        if(gameSurface.getCurrLevel().isPlayerInBlocks( x, y + getHeight() + 1) ||
+                gameSurface.getCurrLevel().isPlayerInBlocks(x + getWidth(), y + getHeight() + 1))
         {
             isAirborne = false;
             return false;
@@ -361,8 +380,8 @@ public class Rabbit extends GameCharacter {
     }
 
     private void checkRightCollision(int tempX){
-        if(gameSurface.getCurrLevel().isInBlocks(tempX + getWidth(), y) ||
-                gameSurface.getCurrLevel().isInBlocks(tempX + getWidth(), y + getHeight()))
+        if(gameSurface.getCurrLevel().isPlayerInBlocks(tempX + getWidth(), y) ||
+                gameSurface.getCurrLevel().isPlayerInBlocks(tempX + getWidth(), y + getHeight()))
         {
             x = collidingBlock.x - getWidth() - 1;
             xCrash();
@@ -373,8 +392,8 @@ public class Rabbit extends GameCharacter {
     }
 
     private void checkLeftCollision(int tempX){
-        if(gameSurface.getCurrLevel().isInBlocks(tempX, y) ||
-                gameSurface.getCurrLevel().isInBlocks(tempX, y + getHeight()))
+        if(gameSurface.getCurrLevel().isPlayerInBlocks(tempX, y) ||
+                gameSurface.getCurrLevel().isPlayerInBlocks(tempX, y + getHeight()))
         {
             x = collidingBlock.x + gameSurface.BLOCK_SIZE + 1;
             xCrash();
@@ -385,8 +404,8 @@ public class Rabbit extends GameCharacter {
     }
 
     private void checkUpCollision(int tempY){
-        if(gameSurface.getCurrLevel().isInBlocks( x, tempY) ||
-                gameSurface.getCurrLevel().isInBlocks(x + getWidth(), tempY))
+        if(gameSurface.getCurrLevel().isPlayerInBlocks( x, tempY) ||
+                gameSurface.getCurrLevel().isPlayerInBlocks(x + getWidth(), tempY))
         {
             y = collidingBlock.y + gameSurface.BLOCK_SIZE + 1;
             yCrash();
@@ -399,8 +418,8 @@ public class Rabbit extends GameCharacter {
     }
 
     private void checkDownCollision(int tempY){
-        if(gameSurface.getCurrLevel().isInBlocks( x, tempY + getHeight()) ||
-                gameSurface.getCurrLevel().isInBlocks(x + getWidth(), tempY + getHeight()))
+        if(gameSurface.getCurrLevel().isPlayerInBlocks( x, tempY + getHeight()) ||
+                gameSurface.getCurrLevel().isPlayerInBlocks(x + getWidth(), tempY + getHeight()))
         {
             y = collidingBlock.y - getHeight() - 1;
             yCrash();
@@ -434,6 +453,7 @@ public class Rabbit extends GameCharacter {
 
     public void shoot(){
 
+        pew.start();
 
         if (facingDirection == Direction.LEFT)
             gameSurface.getCurrLevel().addBullet(new BasicBullet(BitmapFactory.decodeResource(gameSurface.getResources(),
@@ -448,14 +468,56 @@ public class Rabbit extends GameCharacter {
 
     @Override
     public void hit(int damage) {
+        augay.start();
         health -= damage;
         isInvincible = true;
+
+        switch(facingDirection)
+        {
+            case LEFT:
+                downVelocity = 0;
+                leftVelocity = 0;
+                rightVelocity = 1.5f;
+                upVelocity = 1.5f;
+                movingVectorY = -3;
+                movingVectorX = 3;
+                break;
+
+            case RIGHT:
+                downVelocity = 0;
+                leftVelocity = 1.5f;
+                rightVelocity = 0;
+                upVelocity = 1.5f;
+                movingVectorY = -3;
+                movingVectorX = -3;
+                break;
+        }
 
         if(health <= 0)
         {
             // TODO GAME OVER
+            Toast.makeText(gameSurface.context, "YOU LOST",
+                    Toast.LENGTH_LONG).show();
         }
 
 
     }
+
+    private void checkEnemyCollision() {
+
+        if(gameSurface.getCurrLevel().isInEnemies(x, y ))
+            if(!isInvincible)
+                hit(1);
+
+    }
+
+    public void drawHearts(Canvas canvas){
+        for(int i = 0; i < health; i++){
+            canvas.drawBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(gameSurface.getResources(),
+                    gameSurface.getResources().getIdentifier("heart" , "drawable", gameSurface.context.getPackageName())),
+                    10, 10, false),
+                    0 + i * 12,0 + i * 12, null);
+        }
+    }
+
 }

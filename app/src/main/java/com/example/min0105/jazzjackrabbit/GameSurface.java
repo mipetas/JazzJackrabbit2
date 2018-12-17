@@ -8,12 +8,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
@@ -22,6 +19,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     public final int PLAYER_WIDTH = 60;
     public final int PLAYER_HEIGHT = 80;
+
+    private boolean isRabbit = false;
+    private boolean isFinish = false;
 
     private int playerStartX;
     private int playerStartY;
@@ -66,6 +66,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         this.player.draw(canvas);
         this.joystick.draw(canvas);
         this.shootButton.draw(canvas);
+        this.player.drawHearts(canvas);
     }
 
     // Implements method of SurfaceHolder.Callback
@@ -73,8 +74,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         Bitmap playerBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.kralejk_bitmap);
         this.currLevel = new Level(this);
-        saveLevel(context);
-        this.initLevel("level1.txt");
+        currLevel.initLevel("level1.txt");
 
         this.player = new Rabbit(this,playerBitmap,
                 playerStartX,playerStartY,
@@ -181,121 +181,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         return player;
     }
 
-    /************************************/
 
-    public void saveLevel(Context context)
-    {
-
-        BufferedWriter writer;
-        try {
-            File file = new File(context.getFilesDir(), "level1.txt");
-            if(!file.exists())
-            {
-                file.createNewFile();
-            }
-
-            writer = new BufferedWriter(new FileWriter(file));
-
-            writer.write("ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 grass 0 0 0 0 0 0 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 0 rabbit 0 0 0 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 0 0 0 0 0 0 grass 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 0 X 0 0 0 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 grass grass grass grass grass grass 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 grass 0 0 0 0 0 0 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 grass 0 0 0 0 0 0 0 0 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground 0 0 0 0 0 0 0 0 0 0 Eturtle 0 0 0 0 ground ");
-            writer.newLine();
-            writer.write("ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ground ");
-            writer.newLine();
-
-            writer.close();
-
-        }
-        catch(java.io.FileNotFoundException e)
-        {
-            System.out.println("File Not Found");
-            System.exit( 1 );
-        }
-        catch(java.io.IOException e)
-        {
-            System.out.println("something messed up");
-            System.exit( 1 );
-        }
-
-    }
-
-    public void initLevel(String levelName){
-
-        BufferedReader reader = null;
-
-        try {
-            File file = new File(context.getFilesDir(), levelName);
-            reader = new BufferedReader(new FileReader(file));
-
-            String line;
-            int i = 0;
-            int x;
-            int y;
-            while ((line = reader.readLine()) != null) {
-                int j = 0;
-                y = i * BLOCK_SIZE;
-                String[] parts = line.split(" ");
-                for(String item : parts){
-                    x = j * BLOCK_SIZE;
-
-                    if(!item.equals("0") && !item.equals("X"))
-                    {
-                        if(item.equals("rabbit"))
-                            setStartingPosition(x, y);
-                        else if(item.charAt(0) != 'E')
-                        {
-
-                            currLevel.addBlock(new Block(BitmapFactory.decodeResource(getResources(),
-                                    getResources().getIdentifier(item , "drawable", context.getPackageName())),
-                                    x, y, BLOCK_SIZE
-                            ));
-                        }
-                        else
-                        {
-                            currLevel.addEnemy(new Turtle(this,BitmapFactory.decodeResource(getResources(),
-                                    getResources().getIdentifier(item.substring(1) , "drawable", context.getPackageName())),
-                                    1, 1, x, y, PLAYER_WIDTH*3, PLAYER_HEIGHT
-                            ));
-                        }
-                    }
-
-                    j++;
-                }
-
-                i++;
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    /************************************/
 
 }

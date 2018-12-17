@@ -3,11 +3,10 @@ package com.example.min0105.jazzjackrabbit;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.SurfaceView;
 
 
 public class Joystick {
-
-    private GameSurface gameSurface;
 
     private int radius;
 
@@ -18,19 +17,18 @@ public class Joystick {
 
     private double angle = 0;
     private double power = 0;
-    private final int requiredPower = 30;
+    private final int requiredPower = 25;
 
     private Direction direction;
 
     private Paint backgroundPaint;
     private Paint ballPaint;
 
-    public Joystick(GameSurface gameSurface)
+    public Joystick(SurfaceView surface)
     {
-        this.radius = gameSurface.getWidth()/8;
-        this.gameSurface = gameSurface;
+        this.radius = surface.getWidth()/8;
 
-        centerY = gameSurface.getHeight()-radius-10;
+        centerY = surface.getHeight()-radius-10;
         centerX = radius+10;
         ballX = centerX;
         ballY = centerY;

@@ -7,6 +7,8 @@ public class Turtle extends Enemy {
 
     private int speed = 5;
 
+    private int gravity = 5;
+
     public Turtle(GameSurface gameSurface, Bitmap image, int rowCount, int colCount, int x, int y, int width, int height) {
         super(gameSurface, image, rowCount, colCount, x, y, width, height);
 
@@ -25,6 +27,7 @@ public class Turtle extends Enemy {
     public void update() {
 
         int newX = x + speed;
+        int newY = y + gravity;
 
         if(speed > 0){
             if(gameSurface.getCurrLevel().isInBlocks(newX + getWidth(), y + getHeight())){
@@ -40,6 +43,9 @@ public class Turtle extends Enemy {
             else
                 x = newX;
         }
+
+        if(!gameSurface.getCurrLevel().isInBlocks(x + getWidth()/2, newY + getHeight()))
+            y = newY;
 
     }
 
