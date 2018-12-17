@@ -19,7 +19,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".PlayActivity" />
-        <activity android:name=".EditorActivity"></activity>
+        <activity android:name=".EditorActivity" />
+        <activity android:name=".GameOverActivity" />
+        <activity android:name=".WinActivity"></activity>
     </application>
 
 </manifest>

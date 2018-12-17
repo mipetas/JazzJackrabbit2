@@ -1,6 +1,7 @@
 package com.example.min0105.jazzjackrabbit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,13 +12,12 @@ import android.view.SurfaceView;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
+    private boolean isRunning = true;
+
     public final int BLOCK_SIZE = 100;
 
     public final int PLAYER_WIDTH = 60;
     public final int PLAYER_HEIGHT = 80;
-
-    private boolean isRabbit = false;
-    private boolean isFinish = false;
 
     private int playerStartX;
     private int playerStartY;
@@ -62,7 +62,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         this.player.draw(canvas);
         this.joystick.draw(canvas);
         this.shootButton.draw(canvas);
-       // this.player.drawHearts(canvas);
+        this.player.drawHearts(canvas);
     }
 
     // Implements method of SurfaceHolder.Callback
@@ -102,8 +102,18 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             }catch(InterruptedException e)  {
                 e.printStackTrace();
             }
-            retry= true;
+            retry = false;
         }
+    }
+
+    public void gameOver() {
+
+        getContext().startActivity(new Intent(this.getContext(), GameOverActivity.class));
+    }
+
+    public void win() {
+
+        getContext().startActivity(new Intent(this.getContext(), WinActivity.class));
     }
 
     public boolean onTouchEvent(MotionEvent event)
@@ -176,7 +186,5 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     public Rabbit getPlayer(){
         return player;
     }
-
-
 
 }

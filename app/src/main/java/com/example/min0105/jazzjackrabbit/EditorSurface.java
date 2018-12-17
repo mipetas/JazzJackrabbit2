@@ -18,6 +18,9 @@ public class EditorSurface extends SurfaceView implements SurfaceHolder.Callback
 
     public final int BLOCK_SIZE = 100;
 
+    private boolean isRabbit = false;
+    private boolean isFinish = false;
+
     private Joystick joystick;
 
     private EditorGrid editorGrid;
@@ -97,7 +100,7 @@ public class EditorSurface extends SurfaceView implements SurfaceHolder.Callback
             }catch(InterruptedException e)  {
                 e.printStackTrace();
             }
-            retry= true;
+            retry= false;
         }
     }
 

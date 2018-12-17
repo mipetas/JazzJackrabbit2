@@ -19,4 +19,11 @@ public class EditorActivity extends Activity {
         this.setContentView(new EditorSurface(this));
 
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
 }

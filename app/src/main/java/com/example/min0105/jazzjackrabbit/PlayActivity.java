@@ -7,6 +7,8 @@ import android.view.WindowManager;
 
 public class PlayActivity extends Activity {
 
+    protected GameSurface gameView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,7 +18,28 @@ public class PlayActivity extends Activity {
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        this.setContentView(new GameSurface(this));
+        gameView = new GameSurface(this);
+
+        this.setContentView(gameView);
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //gameView.resume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        super.onStop();
+    }
+
 }

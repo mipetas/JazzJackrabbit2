@@ -1,5 +1,6 @@
 package com.example.min0105.jazzjackrabbit;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -27,6 +28,7 @@ public class Rabbit extends GameCharacter {
     private Bitmap[] movingL;
     private Bitmap[] movingR;
     private Bitmap currMoveBitmap;
+    private Bitmap heart;
 
     private MediaPlayer au, augay, pew;
 
@@ -84,6 +86,9 @@ public class Rabbit extends GameCharacter {
         this.jumpShootL = this.createSubImageAt(2,2);
         this.jumpR = this.createSubImageAt(3,1);
         this.jumpShootR = this.createSubImageAt(3,2);
+        this.heart = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(gameSurface.getResources(),
+                gameSurface.getResources().getIdentifier("heart" , "drawable", gameSurface.context.getPackageName())),
+                25, 25, false);
 
         rightFoot = new Point(x + getWidth(), y + getHeight());
         leftFoot = new Point(x, y + getHeight());
@@ -201,9 +206,10 @@ public class Rabbit extends GameCharacter {
         checkEnemyCollision();
         checkInvincibility();
 
-        if(gameSurface.getCurrLevel().isInFinish(newX,newY))
-            Toast.makeText(gameSurface.context, "YOU WON",
-                    Toast.LENGTH_LONG).show();
+        if(gameSurface.getCurrLevel().isInFinish(newX,newY + getHeight()/2))
+            gameSurface.win();
+        if(gameSurface.getCurrLevel().isInFinish(newX + getWidth(),newY + getHeight()/2))
+            gameSurface.win();
 
     }
 
@@ -498,8 +504,7 @@ public class Rabbit extends GameCharacter {
         if(health <= 0)
         {
             // TODO GAME OVER
-            Toast.makeText(gameSurface.context, "YOU LOST",
-                    Toast.LENGTH_LONG).show();
+            gameSurface.gameOver();
         }
 
 
@@ -515,10 +520,7 @@ public class Rabbit extends GameCharacter {
 
     public void drawHearts(Canvas canvas){
         for(int i = 0; i < health; i++){
-            canvas.drawBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(gameSurface.getResources(),
-                    gameSurface.getResources().getIdentifier("heart" , "drawable", gameSurface.context.getPackageName())),
-                    10, 10, false),
-                    0 + i * 12,0, null);
+            canvas.drawBitmap(heart, 0 + i * 27,0, null);
         }
     }
 
