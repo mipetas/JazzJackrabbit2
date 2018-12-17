@@ -8,10 +8,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -66,7 +62,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         this.player.draw(canvas);
         this.joystick.draw(canvas);
         this.shootButton.draw(canvas);
-        this.player.drawHearts(canvas);
+       // this.player.drawHearts(canvas);
     }
 
     // Implements method of SurfaceHolder.Callback

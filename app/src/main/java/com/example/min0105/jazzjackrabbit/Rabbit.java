@@ -96,6 +96,8 @@ public class Rabbit extends GameCharacter {
         au = MediaPlayer.create(gameSurface.context, R.raw.au);
         augay = MediaPlayer.create(gameSurface.context, R.raw.augay);
 
+        this.health = 3;
+
     }
 
 
@@ -199,7 +201,7 @@ public class Rabbit extends GameCharacter {
         checkEnemyCollision();
         checkInvincibility();
 
-        if(gameSurface.getCurrLevel().isInFinish(x,y))
+        if(gameSurface.getCurrLevel().isInFinish(newX,newY))
             Toast.makeText(gameSurface.context, "YOU WON",
                     Toast.LENGTH_LONG).show();
 
@@ -516,7 +518,7 @@ public class Rabbit extends GameCharacter {
             canvas.drawBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(gameSurface.getResources(),
                     gameSurface.getResources().getIdentifier("heart" , "drawable", gameSurface.context.getPackageName())),
                     10, 10, false),
-                    0 + i * 12,0 + i * 12, null);
+                    0 + i * 12,0, null);
         }
     }
 
