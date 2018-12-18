@@ -1,4 +1,4 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.GameObjects;
 
 import android.graphics.Bitmap;
 

@@ -2,6 +2,7 @@ package com.example.min0105.jazzjackrabbit;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +32,11 @@ public class WinActivity extends Activity {
         playAgain.setOnTouchListener(playAgainTouchListener);
         menu.setOnTouchListener(menuTouchListener);
 
+        SharedPreferences mySharedPref = getSharedPreferences("LEVELS", MODE_PRIVATE);
+        SharedPreferences.Editor mySharedPrefEditor = mySharedPref.edit();
+        String currLvl = mySharedPref.getString("currLevel", "level1.txt");
+        mySharedPrefEditor.putInt(currLvl, 1);
+        mySharedPrefEditor.commit();
     }
 
     Button.OnTouchListener menuTouchListener = new Button.OnTouchListener() {
@@ -65,5 +71,12 @@ public class WinActivity extends Activity {
             return false;
         }
     };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
 
 }

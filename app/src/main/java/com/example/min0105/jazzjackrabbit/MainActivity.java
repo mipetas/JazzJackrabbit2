@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+
+import com.example.min0105.jazzjackrabbit.LevelEditor.EditorActivity;
 
 public class MainActivity extends Activity {
 
@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
-                    Intent intent = new Intent(getApplicationContext(), PlayActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), LevelSelectActivity.class);
                     startActivity(intent);
                     break;
                 }

@@ -1,12 +1,14 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.GameObjects;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.media.MediaPlayer;
-import android.widget.Toast;
+
+import com.example.min0105.jazzjackrabbit.Direction;
+import com.example.min0105.jazzjackrabbit.GameSurface;
+import com.example.min0105.jazzjackrabbit.R;
 
 
 public class Rabbit extends GameCharacter {

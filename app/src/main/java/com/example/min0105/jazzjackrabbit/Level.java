@@ -3,10 +3,17 @@ package com.example.min0105.jazzjackrabbit;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
+import com.example.min0105.jazzjackrabbit.GameObjects.Block;
+import com.example.min0105.jazzjackrabbit.GameObjects.Bullet;
+import com.example.min0105.jazzjackrabbit.GameObjects.Enemy;
+import com.example.min0105.jazzjackrabbit.GameObjects.GameBlock;
+import com.example.min0105.jazzjackrabbit.GameObjects.Turtle;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Level {
@@ -162,8 +169,17 @@ public class Level {
         BufferedReader reader = null;
 
         try {
-            File file = new File(gameSurface.context.getFilesDir(), levelName);
-            reader = new BufferedReader(new FileReader(file));
+            File file;
+            if(levelName == "custom.txt")
+            {
+                file  = new File(gameSurface.context.getFilesDir(), levelName);
+                reader = new BufferedReader(new FileReader(file));
+            }
+
+            else
+                reader = new BufferedReader(
+                    new InputStreamReader(gameSurface.context.getAssets().open(levelName), "UTF-8"));
+
 
             String line;
             int i = 0;

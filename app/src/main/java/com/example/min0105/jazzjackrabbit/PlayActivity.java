@@ -39,7 +39,7 @@ public class PlayActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        super.onStop();
+        finish();
     }
 
 }

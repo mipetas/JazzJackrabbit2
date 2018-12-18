@@ -1,4 +1,4 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.LevelEditor;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

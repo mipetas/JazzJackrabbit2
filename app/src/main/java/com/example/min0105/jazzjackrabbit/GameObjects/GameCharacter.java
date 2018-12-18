@@ -1,7 +1,6 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.GameObjects;
 
 import android.graphics.Bitmap;
-import android.graphics.Point;
 
 public abstract class GameCharacter extends GameObject implements IDestroyable {
 

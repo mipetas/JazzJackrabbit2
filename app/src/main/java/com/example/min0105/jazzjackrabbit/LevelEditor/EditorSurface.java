@@ -1,4 +1,4 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.LevelEditor;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,9 +7,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import com.example.min0105.jazzjackrabbit.Joystick;
 
 
 public class EditorSurface extends SurfaceView implements SurfaceHolder.Callback {

@@ -1,7 +1,8 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.GameObjects;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
+
+import com.example.min0105.jazzjackrabbit.GameSurface;
 
 public class Turtle extends Enemy {
 

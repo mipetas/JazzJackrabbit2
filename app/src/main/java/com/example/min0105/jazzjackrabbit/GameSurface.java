@@ -2,12 +2,15 @@ package com.example.min0105.jazzjackrabbit;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.example.min0105.jazzjackrabbit.GameObjects.Rabbit;
 
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
@@ -32,7 +35,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     private ShootButton shootButton;
 
-    Context context;
+    public Context context;
 
     public GameSurface(Context context)  {
         super(context);
@@ -70,7 +73,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         Bitmap playerBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.kralejk_bitmap);
         this.currLevel = new Level(this);
-        currLevel.initLevel("level1.txt");
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                "LEVELS", Context.MODE_PRIVATE);
+        String levelName = sharedPref.getString("currLevel", "custom.txt");
+        currLevel.initLevel(levelName);
 
         this.player = new Rabbit(this,playerBitmap,
                 playerStartX,playerStartY,
@@ -81,6 +87,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         this.gameThread = new GameThread(this,holder);
         this.gameThread.setRunning(true);
         this.gameThread.start();
+
     }
 
     // Implements method of SurfaceHolder.Callback

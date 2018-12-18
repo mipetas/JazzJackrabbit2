@@ -66,4 +66,10 @@ public class GameOverActivity extends Activity {
         }
     };
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
 }

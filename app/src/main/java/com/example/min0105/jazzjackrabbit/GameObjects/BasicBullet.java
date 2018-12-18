@@ -1,6 +1,8 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.GameObjects;
 
 import android.graphics.Bitmap;
+
+import com.example.min0105.jazzjackrabbit.Direction;
 
 
 public class BasicBullet extends Bullet {

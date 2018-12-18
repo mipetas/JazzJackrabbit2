@@ -1,4 +1,4 @@
-package com.example.min0105.jazzjackrabbit;
+package com.example.min0105.jazzjackrabbit.LevelEditor;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -91,7 +91,7 @@ public class EditorGrid {
 
         BufferedWriter writer;
         try {
-            File file = new File(context.getFilesDir(), "level1.txt");
+            File file = new File(context.getFilesDir(), "custom.txt");
             if(!file.exists())
             {
                 file.createNewFile();
